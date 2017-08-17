@@ -1,0 +1,49 @@
+1. ApolloAuto
+
+1.1 apollo-platform
+
+1.1.1Decentralization
+
+Problem Definition
+
+ROS heavily relies on the Master role to manage all the communications, remote services and parameters across all the nodes. 
+However, this leads to the concern on single node failure. 
+If ROS master is down, then the whole system can not be recovered or resumed.
+
+Feature Description
+
+To be free of dependency of the ROS master, we propose this decentralization feature, which implements:
+
+with this feature, only parameter services still stay in ROS master, all the other functions have been removed
+Even without ROS master, the node that does not depend on param, will still run without any problem
+tools like rostopic/rosnode still rely on ROS master to get stats information for better response time
+ROS master, as the parameter services, can persistent the data and recover the data after restart/crash. 
+And the service discovery will help the new ROS master to recover information about topic/service/node/
+
+
+1.1.2 Native Support with Protobuf
+
+Problem Definition
+
+ROS message is known having problem with backward compatibility. 
+Anytime, when the ROS message is changed, the original collected data is not usable unless converted into the new message format. 
+This is a huge pain in autonomous driving area because huge amount of data was recorded at runtime compared to the traditional robotic area.
+Protobuf is a popular protocol format, which is well designed with backward compatibility, also the data could be more compact. 
+However, ROS community has concerns that protobuf will not handle very large message well. 
+So, that is why we propose to support both original ROS message and protobuf natively.
+
+1.1.3 High Efficient Communication based on Shared Memory Transport
+
+Problem Definition
+
+ROS supports both Node and Nodelet. For node, pub/sub services are based on socket because each node is a standalone process. For nodelet, pub/sub services are based on shared memory, nodelets are thread within the same process.
+
+In autonomous driving area, we see a couple of problems in the original ROS design.
+
+For node, each pub/sub will have copies of message back and forth between application and kernel mode. When multiple subscriber for the same topic, the number of data copies are linear increased which leads to resource and performance concerns.
+For nodelet with thread mode, the isolation is worse than the node even though they have better communication based on shared memory.
+
+apollo
+
+
+apollo-
